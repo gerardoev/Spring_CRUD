@@ -25,8 +25,8 @@ public class ClientService implements ClientServiceI{
     }
 
     @Override
-    public Client updateClient(Client client) {
-        Client findResponse = clientRepository.findById(client.getId());
+    public Client updateClient(Long id, Client client) {
+        Client findResponse = clientRepository.findById(id);
         if( findResponse == null){
             return null;
         }

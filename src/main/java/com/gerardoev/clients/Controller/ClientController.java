@@ -50,8 +50,7 @@ public class ClientController {
         if(cliente == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else{
-            clienteR.setId(id);
-            cliente = clientService.updateClient(clienteR);
+            cliente = clientService.updateClient(id, clienteR);
             if (cliente ==  null){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }else{
