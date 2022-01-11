@@ -13,22 +13,19 @@ import java.util.*;
 @Component
 public class ClientRepository implements ClientRepositoryI {
     Gson gson = new GsonBuilder().create();
+    public static long gId = 0;
 
     @Override
     public Client save(Client client) {
 
-
         try {
-            Reader rd = new FileReader("db.json");
-            Type type = new TypeToken<Map<Long, Client>>(){}.getType();
-            HashMap<Long, Client> clients =  gson.fromJson(rd, type);
-            rd.close();
+            HashMap<Long, Client> clients = getDB();
             if(clients == null)
                 clients = new HashMap<>();
             Writer fw = new FileWriter("db.json");
-            Long id = 1L;
-            client.setId(id);
-            clients.put(id,client);
+            gId += 1;
+            client.setId(gId);
+            clients.put(gId,client);
             gson.toJson(clients, fw);
             fw.flush();
             fw.close();
@@ -46,14 +43,14 @@ public class ClientRepository implements ClientRepositoryI {
             Reader rd = new FileReader("db.json");
             Type type = new TypeToken<Map<Long, Client>>(){}.getType();
             HashMap<Long, Client> clientsDB =  gson.fromJson(rd, type);
+            rd.close();
             for ( Client client : clientsDB.values()) {
                 clients.add(client);
             }
-            rd.close();
             return clients;
         } catch (FileNotFoundException e) {
             System.out.println(e);
-            return null;
+            return new ArrayList<Client>();
         } catch (IOException e) {
             System.out.println(e);
             return null;
@@ -63,6 +60,9 @@ public class ClientRepository implements ClientRepositoryI {
     @Override
     public void deleteById(long id) {
         HashMap<Long, Client> clients = getDB();
+        if(clients == null){
+            return;
+        }
         clients.remove(id);
         try {
             Writer fw = new FileWriter("db.json");
