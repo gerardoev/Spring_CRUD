@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClientService implements ClientServiceI{
@@ -21,21 +20,17 @@ public class ClientService implements ClientServiceI{
 
     @Override
     public Client getClient(long id) {
-        Optional<Client> findResponse = clientRepository.findById(id);
-        if(findResponse.isEmpty()){
-            return null;
-        }else {
-            return findResponse.get();
-        }
+        Client findResponse = clientRepository.findById(id);
+        return findResponse;
     }
 
     @Override
     public Client updateClient(Client client) {
-        Optional<Client> findResponse = clientRepository.findById(client.getId());
-        if( findResponse.isEmpty()){
+        Client findResponse = clientRepository.findById(client.getId());
+        if( findResponse == null){
             return null;
         }
-        Client clientDB = findResponse.get();
+        Client clientDB = findResponse;
         clientDB.setNombre(client.getNombre());
         clientDB.setCorreo(client.getCorreo());
         return clientRepository.save(clientDB);
@@ -44,8 +39,8 @@ public class ClientService implements ClientServiceI{
     @Override
     public boolean deleteClient(long id) {
         clientRepository.deleteById(id);
-        Optional<Client> findResponse = clientRepository.findById(id);
-        if( findResponse.isEmpty()){
+        Client findResponse = clientRepository.findById(id);
+        if( findResponse == null){
             return true;
         }
         return false;
@@ -53,11 +48,8 @@ public class ClientService implements ClientServiceI{
 
     @Override
     public List<Client> getClients() {
-        ArrayList<Client> clients = new ArrayList<>();
-        Iterable<Client> foundIterable = clientRepository.findAll();
-        for (Client client : foundIterable) {
-            clients.add(client);
-        }
-        return clients;
+        ArrayList<Client> found = (ArrayList<Client>) clientRepository.findAll();
+
+        return found;
     }
 }
